@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>CSV Diff App — CSN</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Compare Filters Vs Rough Draf</h1>
+    <p class="hint">Upload <strong>filters.csv</strong>, <strong>draft.csv</strong> and <strong>specialty.csv</strong> files</p>
+
+    <section class="card">
+      <h2>1) Upload files</h2>
+      <form id="csvForm">
+        <div class="grid">
+          <label class="file">
+            <span>filters.csv</span>
+            <input type="file" name="filters" accept=".csv" required />
+          </label>
+          <label class="file">
+            <span>draft.csv</span>
+            <input type="file" name="draft" accept=".csv" required />
+          </label>
+          <label class="file">
+            <span>specialty.csv</span>
+            <input type="file" name="specialty" accept=".csv" required />
+          </label>
+        </div>
+        <button type="submit" class="primary">Process data</button>
+        <div id="status"></div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>2) Results</h2>
+
+      <div class="result-block">
+        <h3>trips_In_Filters_Not_In_Specialty.csv</h3>
+        <div class="actions">
+          <a id="downloadCsv1" class="button" href="#" download="trips_In_Filters_Not_In_Specialty.csv" style="display:none;">⬇ Download CSV</a>
+        </div>
+        <div id="table1" class="table-wrapper empty">No data</div>
+      </div>
+
+      <div class="result-block">
+        <h3>trips_In_Specialty_Not_In_Filters.csv</h3>
+        <div class="actions">
+          <a id="downloadCsv2" class="button" href="#" download="trips_In_Specialty_Not_In_Filters.csv" style="display:none;">⬇ Download CSV</a>
+        </div>
+        <div id="table2" class="table-wrapper empty">No data</div>
+      </div>
+    </section>
+
+    <footer>
+      <small>CFS Coordinated fleet services Inc. 2025</small>
+    </footer>
+  </main>
+
+  <script src="/script.js"></script>
+</body>
+</html>
