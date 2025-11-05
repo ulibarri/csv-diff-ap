@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<%= lang %>">
 <head>
   <meta charset="UTF-8" />
   <title>CSV Diff App — CSN</title>
@@ -8,11 +8,23 @@
 </head>
 <body>
   <main class="container">
-    <h1>Compare Filters Vs Rough Draf</h1>
-    <p class="hint">Upload <strong>filters.csv</strong>, <strong>draft.csv</strong> and <strong>specialty.csv</strong> files</p>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+      <h1 id="t_title">Comparar CSV por CSN</h1>
+      <label style="color:#94a3b8;">
+        <span id="t_language">Idioma</span>:
+        <select id="langSelect">
+          <option value="es" <%= lang==='es'?'selected':'' %> >Español</option>
+          <option value="en" <%= lang==='en'?'selected':'' %> >English</option>
+        </select>
+      </label>
+    </div>
+
+    <p id="t_hint" class="hint">
+      Sube <strong>filters.csv</strong>, <strong>draft.csv</strong> y <strong>specialty.csv</strong>. Todo se procesa como JSON, sin base de datos.
+    </p>
 
     <section class="card">
-      <h2>1) Upload files</h2>
+      <h2 id="t_step1">1) Cargar archivos</h2>
       <form id="csvForm">
         <div class="grid">
           <label class="file">
@@ -28,36 +40,52 @@
             <input type="file" name="specialty" accept=".csv" required />
           </label>
         </div>
-        <button type="submit" class="primary">Process data</button>
+        <button type="submit" class="primary" id="t_process_btn">Procesar datos</button>
         <div id="status"></div>
       </form>
     </section>
 
     <section class="card">
-      <h2>2) Results</h2>
+      <h2 id="t_step2">2) Resultados</h2>
 
       <div class="result-block">
-        <h3>trips_In_Filters_Not_In_Specialty.csv</h3>
+        <h3 id="t_res1_title">trips_In_Filters_Not_In_Specialty.csv</h3>
         <div class="actions">
-          <a id="downloadCsv1" class="button" href="#" download="trips_In_Filters_Not_In_Specialty.csv" style="display:none;">⬇ Download CSV</a>
+          <a id="downloadCsv1" class="button" href="#" download="trips_In_Filters_Not_In_Specialty.csv" style="display:none;">⬇ <span id="t_download">Descargar CSV</span></a>
         </div>
-        <div id="table1" class="table-wrapper empty">No data</div>
+        <div id="table1" class="table-wrapper empty">Sin datos</div>
       </div>
 
       <div class="result-block">
-        <h3>trips_In_Specialty_Not_In_Filters.csv</h3>
+        <h3 id="t_res2_title">trips_In_Specialty_Not_In_Filters.csv</h3>
         <div class="actions">
-          <a id="downloadCsv2" class="button" href="#" download="trips_In_Specialty_Not_In_Filters.csv" style="display:none;">⬇ Download CSV</a>
+          <a id="downloadCsv2" class="button" href="#" download="trips_In_Specialty_Not_In_Filters.csv" style="display:none;">⬇ <span id="t_download2">Descargar CSV</span></a>
         </div>
-        <div id="table2" class="table-wrapper empty">No data</div>
+        <div id="table2" class="table-wrapper empty">Sin datos</div>
       </div>
     </section>
 
+    <!-- NUEVA SECCIÓN: BÚSQUEDA EN DRAFT -->
+    <section class="card">
+      <h2 id="t_step3">3) Búsqueda en Draft.csv</h2>
+      <p class="hint" id="t_search_hint">
+        Busca por <strong>PACE MRN</strong> o <strong>Patient</strong>.
+      </p>
+      <div class="grid" style="grid-template-columns:1fr auto;">
+        <input id="searchInput" type="text" placeholder="Criterio de búsqueda (ej. Caro, SDP10035365)" />
+        <button id="searchBtn" class="button" type="button">🔎 <span id="t_search_btn">Buscar</span></button>
+      </div>
+      <div id="searchTable" class="table-wrapper empty">Sin datos</div>
+    </section>
+
     <footer>
-      <small>CFS Coordinated fleet services Inc. 2025</small>
+      <small id="t_footer">Hecho con Node.js + Express + EJS. No se guarda nada en disco.</small>
     </footer>
   </main>
 
+  <script>
+    window.__APP_LANG__ = "<%= lang %>";
+  </script>
   <script src="/script.js"></script>
 </body>
 </html>
