@@ -1,6 +1,6 @@
 const i18n = {
   es: {
-    title: 'Comparar archivos filtrados vs San Diego PACE Rough Draft',
+    title: 'Comparar viajes filtrados vs viajes CSV Specialty',
     language: 'Idioma',
     hint: 'Sube los archivos <strong>filters.csv</strong>, <strong>draft.csv</strong> y <strong>specialty.csv</strong>.',
     step1: '1) Cargar archivos',
@@ -14,10 +14,12 @@ const i18n = {
     processing: 'Procesando...',
     errorPrefix: 'Error: ',
     searchBtn: 'Buscar',
-    searchPlaceholder: 'Criterio de búsqueda (ej. Caro, SDP10035365)'
+    searchPlaceholder: 'Criterio de búsqueda (ej. Caro, SDP10035365)',
+    countSingle: '{n} fila',
+    countPlural: '{n} filas'
   },
   en: {
-    title: 'Compare Filtered files vs San Diego PACE Rough Draft',
+    title: 'Compare Filtered trips vs Specialty CSV trips',
     language: 'Language',
     hint: 'Upload filters.csv, draft.csv and specialty.csv files',
     step1: '1) Upload files',
@@ -31,9 +33,17 @@ const i18n = {
     processing: 'Processing...',
     errorPrefix: 'Error: ',
     searchBtn: 'Search',
-    searchPlaceholder: 'Search criteria (e.g., Caro, SDP10035365)'
+    searchPlaceholder: 'Search criteria (e.g., Caro, SDP10035365)',
+    countSingle: '{n} row',
+    countPlural: '{n} rows'
   }
 };
+
+function formatCount(lang, n) {
+  const d = i18n[lang] || i18n.es;
+  const key = (n === 1) ? 'countSingle' : 'countPlural';
+  return (d[key] || '{n}').replace('{n}', n);
+}
 
 
 function applyLang(lang) {
@@ -77,6 +87,65 @@ function applyLang(lang) {
     window.history.replaceState({}, '', url.toString());
   });
 })();
+
+// ---------- Conteo de filas para archivos en Sección 1 ----------
+const fileFilters = document.getElementById('fileFilters');
+const fileDraft = document.getElementById('fileDraft');
+const fileSpecialty = document.getElementById('fileSpecialty');
+
+const fileCountFilters = document.getElementById('fileCountFilters');
+const fileCountDraft = document.getElementById('fileCountDraft');
+const fileCountSpecialty = document.getElementById('fileCountSpecialty');
+
+// Conteo simple de filas: cuenta líneas no vacías menos 1 (header)
+// Nota: si hay saltos de línea dentro de campos entre comillas muy complejos,
+// este conteo podría variar; para uso rápido de UI funciona bien.
+function estimateCsvRowCount(text) {
+  if (!text) return 0;
+  const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+  if (lines.length === 0) return 0;
+  return Math.max(0, lines.length - 1); // restar encabezado
+}
+
+function showFileRowCount(targetEl, n) {
+  const lang = (document.getElementById('langSelect').value || 'es');
+  targetEl.textContent = formatCount(lang, n);
+}
+
+function resetFileRowCount(targetEl) {
+  targetEl.textContent = '—';
+}
+
+function handleFileChange(inputEl, countEl) {
+  const file = inputEl.files && inputEl.files[0];
+  if (!file) { resetFileRowCount(countEl); return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const text = reader.result || '';
+    const n = estimateCsvRowCount(text);
+    showFileRowCount(countEl, n);
+  };
+  reader.onerror = () => resetFileRowCount(countEl);
+  reader.readAsText(file);
+}
+
+fileFilters.addEventListener('change', () => handleFileChange(fileFilters, fileCountFilters));
+fileDraft.addEventListener('change', () => handleFileChange(fileDraft, fileCountDraft));
+fileSpecialty.addEventListener('change', () => handleFileChange(fileSpecialty, fileCountSpecialty));
+
+// Si cambia el idioma, re-renderiza textos de conteo actuales si son números
+(function hookLangToFileCounts(){
+  const origApplyLang = applyLang;
+  window.applyLang = function(lang){
+    origApplyLang(lang);
+    // Reaplicar si hay números
+    [fileCountFilters, fileCountDraft, fileCountSpecialty].forEach(el=>{
+      const n = parseInt(el.textContent);
+      if (!isNaN(n)) el.textContent = formatCount(lang, n);
+    });
+  };
+})();
+
 
 // ---------- lógica de app ----------
 const form = document.getElementById('csvForm');
@@ -224,6 +293,11 @@ form.addEventListener('submit', async (e) => {
   table1.textContent = i18n[lang].empty;
   table2.textContent = i18n[lang].empty;
   searchTable.textContent = i18n[lang].empty;
+  // opcional: mantener los contadores como referencia del usuario
+// resetFileRowCount(fileCountFilters);
+// resetFileRowCount(fileCountDraft);
+// resetFileRowCount(fileCountSpecialty);
+
 
   try {
     const fd = new FormData(form);
@@ -234,6 +308,11 @@ form.addEventListener('submit', async (e) => {
     // Tablas de resultados
     renderTable(table1, data.trips_In_Filters_Not_In_Specialty);
     renderTable(table2, data.trips_In_Specialty_Not_In_Filters);
+    //show row count
+    const c1 = data.trips_In_Filters_Not_In_Specialty?.length || 0;
+    const c2 = data.trips_In_Specialty_Not_In_Filters?.length || 0;
+    document.getElementById('count1').textContent = `${c1} ${c1 === 1 ? 'row' : 'rows'}`;
+    document.getElementById('count2').textContent = `${c2} ${c2 === 1 ? 'row' : 'rows'}`;
 
     // Enlaces de descarga con prefijo
     const prefix = data?.meta?.visitDatePrefix || '';
