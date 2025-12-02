@@ -327,8 +327,8 @@ form.addEventListener('submit', async (e) => {
     //show row count
     const c1 = data.trips_In_Filters_Not_In_Specialty?.length || 0;
     const c2 = data.trips_In_Specialty_Not_In_Filters?.length || 0;
-    document.getElementById('count1').textContent = `${c1} ${c1 === 1 ? 'row' : 'rows'}`;
-    document.getElementById('count2').textContent = `${c2} ${c2 === 1 ? 'row' : 'rows'}`;
+    document.getElementById('count1').textContent = `${c1} ${c1 === 1 ? 'trip' : 'trips'}`;
+    document.getElementById('count2').textContent = `${c2} ${c2 === 1 ? 'trip' : 'trips'}`;
 
     // Enlaces de descarga con prefijo
     const prefix = data?.meta?.visitDatePrefix || '';
