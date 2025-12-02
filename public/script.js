@@ -35,8 +35,8 @@ const i18n = {
     errorPrefix: 'Error: ',
     searchBtn: 'Search',
     searchPlaceholder: 'Search criteria (e.g., Caro, SDP10035365)',
-    countSingle: '{n} fila',
-    countPlural: '{n} filas',
+    countSingle: '{n} viaje',
+    countPlural: '{n} viajes',
     done: 'Done'
   }
 };
