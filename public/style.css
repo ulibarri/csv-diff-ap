@@ -203,3 +203,26 @@ small {
     font-size: 2rem !important;
   }
 }
+/* ===== Instructions section ===== */
+.instructions-card {
+  background: var(--cfs-white);
+  border: 1px solid var(--cfs-border);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.instructions-card h2 {
+  color: var(--cfs-blue);
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+.instructions-card ol {
+  margin-left: 1.25rem;
+  color: var(--cfs-gray);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.instructions-card li {
+  margin-bottom: 0.4rem;
+}

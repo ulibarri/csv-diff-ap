@@ -15,8 +15,9 @@ const i18n = {
     errorPrefix: 'Error: ',
     searchBtn: 'Buscar',
     searchPlaceholder: 'Criterio de búsqueda (ej. Caro, SDP10035365)',
-    countSingle: '{n} fila',
-    countPlural: '{n} filas'
+    countSingle: '{n} viaje',
+    countPlural: '{n} viajes',
+    done: 'Listo'
   },
   en: {
     title: 'Compare Filtered trips vs Specialty CSV trips',
@@ -34,8 +35,9 @@ const i18n = {
     errorPrefix: 'Error: ',
     searchBtn: 'Search',
     searchPlaceholder: 'Search criteria (e.g., Caro, SDP10035365)',
-    countSingle: '{n} row',
-    countPlural: '{n} rows'
+    countSingle: '{n} fila',
+    countPlural: '{n} filas',
+    done: 'Done'
   }
 };
 
@@ -72,6 +74,20 @@ function applyLang(lang) {
   if (t1.classList.contains('empty')) t1.textContent = d.empty;
   if (t2.classList.contains('empty')) t2.textContent = d.empty;
   if (st.classList.contains('empty')) st.textContent = d.empty;
+
+    // Mostrar instrucciones según idioma
+  const listEn = document.getElementById('t_instructions_list');
+  const listEs = document.getElementById('t_instructions_list_es');
+  if (listEn && listEs) {
+    if (lang === 'en') {
+      listEn.style.display = 'block';
+      listEs.style.display = 'none';
+    } else {
+      listEn.style.display = 'none';
+      listEs.style.display = 'block';
+    }
+  }
+
 }
 
 (function initLang(){
@@ -337,7 +353,9 @@ form.addEventListener('submit', async (e) => {
     const autoRows = runSearchCombined(['Caro', 'SDP10035365']);
     renderSearchTable(autoRows);
 
-    statusEl.textContent = 'Listo ✅';
+    statusEl.textContent = i18n[lang].done
+    // 'Listo ✅';
+    // 
   } catch (err) {
     const lang2 = (document.getElementById('langSelect').value || 'es');
     statusEl.textContent = i18n[lang2].errorPrefix + err.message;
